@@ -18,6 +18,7 @@ btnLoadMore.addEventListener('click', onClickLoadMore);
 
 async function onSubmitForm(e) {
   e.preventDefault();
+  btnLoadMore.classList.add('is-hidden');
   cards.innerHTML = '';
   inputSearch = e.currentTarget.searchQuery.value;
   if (inputSearch === '') {
@@ -29,6 +30,7 @@ async function onSubmitForm(e) {
   try {
     const { data } = await fetchImages(inputSearch, page);
     if (!data.hits.length) {
+      
       return Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
@@ -39,9 +41,7 @@ async function onSubmitForm(e) {
     lightbox.refresh();
     totalImages = data.hits.length;
     if (totalImages === data.totalHits) {
-      Notiflix.Notify.info(
-        "We're sorry, but you've reached the end of search results."
-      );
+      btnLoadMore.classList.add('is-hidden');
     }
     if (data.totalHits > 40) {
       btnLoadMore.classList.remove('is-hidden');
@@ -53,9 +53,11 @@ async function onSubmitForm(e) {
 
 async function onClickLoadMore() {
   page += 1;
+  btnLoadMore.classList.add('is-hidden');
   try {
     const { data } = await fetchImages(inputSearch, page);
     addMarkup(data.hits);
+    btnLoadMore.classList.remove('is-hidden');
     lightbox.refresh();
     totalImages += data.hits.length;
     console.log(totalImages);
